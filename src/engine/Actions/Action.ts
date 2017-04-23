@@ -121,8 +121,6 @@ export class MoveTo implements IAction {
       if (this.isComplete(this._actor)) {
          this._actor.pos.x = this._end.x;
          this._actor.pos.y = this._end.y;
-         this._actor.vel.y = 0;
-         this._actor.vel.x = 0;
       }
    }
 
