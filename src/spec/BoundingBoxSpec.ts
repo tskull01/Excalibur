@@ -117,6 +117,14 @@ describe('A Bounding Box', () => {
       expect(bb.rayCast(ray)).toBe(true);
    });
 
+   it('ray cast can report the time it takes to ray cast', () => {
+      var bb = new ex.BoundingBox(0, 0, 10, 10);
+
+      var ray = new ex.Ray(new ex.Vector(0, -5), ex.Vector.Down);
+
+      expect(bb.rayCastTime(ray)).toBe(5);
+   });
+
    it('ray cast can originate from inside the box', () => {
       var bb = new ex.BoundingBox(0, 0, 10, 10);
 
