@@ -132,10 +132,7 @@ export class BoundingBox implements ICollidable {
       var ty2 = (this.bottom - ray.pos.y) * yinv;
       tmin = Math.max(tmin, Math.min(ty1, ty2));
       tmax = Math.min(tmax, Math.max(ty1, ty2));
-
-      console.log('tmin', tmin);
-      console.log('tmax', tmax);      
-
+      
       return tmax >= Math.max(0, tmin) && tmin < farClipDistance;
    }
 
