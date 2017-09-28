@@ -22,7 +22,7 @@ describe('A Collision', () => {
 
    afterEach(() => {
       engine.stop();
-   })
+   });
 
    it('should throw one event for each actor participating', () => {
       var numCollisions = 0;
@@ -81,8 +81,23 @@ describe('A Collision', () => {
      });
    });
    
-   it('should not throw collision events when actor is killed', () => {
+   it('should not throw collision events when passive actor is killed (GH-799)', () => {
+      actor2.collisionType = ex.CollisionType.Passive;
 
+      var numCollisions = 0;
+      actor1.on('collision', (e: ex.CollisionEvent) => {
+         e.other.kill();
+         numCollisions++;
+      });
+
+      actor2.on('collision', (e: ex.CollisionEvent) => {         
+         numCollisions++;
+      });
+      scene.update(engine, 20);
+      scene.update(engine, 20);
+      scene.update(engine, 20);
+      scene.update(engine, 20);
+      expect(numCollisions).toBe(2);
    });
 
 
