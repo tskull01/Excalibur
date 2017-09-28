@@ -9,7 +9,7 @@ describe('A Collision', () => {
    var mock = new Mocks.Mocker();
 
    beforeEach(() => {
-      engine = mock.engine(0, 0);
+      engine = TestUtils.engine();
       scene = new ex.Scene(engine);
       engine.currentScene = scene;
       actor1 = new ex.Actor(0, 0, 10, 10);
@@ -19,6 +19,10 @@ describe('A Collision', () => {
       scene.add(actor1);
       scene.add(actor2);
    });
+
+   afterEach(() => {
+      engine.stop();
+   })
 
    it('should throw one event for each actor participating', () => {
       var numCollisions = 0;
@@ -74,13 +78,12 @@ describe('A Collision', () => {
          }
          
        });
-       
      });
-  
-  
-     
    });
    
+   it('should not throw collision events when actor is killed', () => {
+
+   });
 
 
 });
