@@ -8,6 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## Breaking Changes
 
 ## Added
+- Drag and drop support for Actors ([#134](https://github.com/excaliburjs/Excalibur/issues/134))
 
 ## Changed
 
