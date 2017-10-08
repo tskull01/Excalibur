@@ -460,6 +460,29 @@ export class Actor extends Class implements IActionable, IEvented {
       }
    }
 
+   private _dragAndDropEnabled: false;
+
+   public get dragAndDrop() {
+      return this._dragAndDropEnabled;
+   }
+
+   public set dragAndDrop(enabled: boolean) {
+      if (enabled) {
+         var pointerDown = false;
+         this.on('pointerdown', () => { pointerDown = true; });
+         this.on('pointerup', () => { pointerDown = false; });
+         this.on('pointermove', (pe: PointerEvent) => {
+            if (!pointerDown) {
+               return;
+            }
+            this.x = pe.x;
+            this.y = pe.y;
+         });
+      } else {
+         this._dragAndDropEnabled = false;
+      }
+   }
+
    private _checkForPointerOptIn(eventName: string) {
       if (eventName) {
          const normalized = eventName.toLowerCase();
@@ -471,6 +494,7 @@ export class Actor extends Class implements IActionable, IEvented {
          }
       }
    }
+   
 
    public on(eventName: Events.precollision, handler: (event?: PreCollisionEvent) => void): void;
    public on(eventName: Events.collision, handler: (event?: CollisionEvent) => void): void;
