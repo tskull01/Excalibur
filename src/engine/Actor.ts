@@ -469,14 +469,18 @@ export class Actor extends Class implements IActionable, IEvented {
    public set dragAndDrop(enabled: boolean) {
       if (enabled) {
          var pointerDown = false;
-         this.on('pointerdown', () => { pointerDown = true; });
+         var offset = new Vector(0,0); // offset is the distance between the previous pointer event and the actor's anchor
+         this.on('pointerdown', (pe: PointerEvent) => { 
+            pointerDown = true;
+            offset.setTo(pe.x - this.x, pe.y - this.y);
+         });
          this.on('pointerup', () => { pointerDown = false; });
          this.on('pointermove', (pe: PointerEvent) => {
             if (!pointerDown) {
                return;
             }
-            this.x = pe.x;
-            this.y = pe.y;
+            this.pos.setTo(pe.x - offset.x, pe.y - offset.y);
+            offset.setTo(pe.x - this.x, pe.y - this.y);
          });
       } else {
          this._dragAndDropEnabled = false;
