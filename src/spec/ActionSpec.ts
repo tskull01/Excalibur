@@ -141,6 +141,35 @@ describe('Action', () => {
    });
 
    describe('moveBy', () => {
+      it('can move expected over time', () => {
+         actor = new ex.Actor(0, 0);
+         expect(actor.pos.x).toBe(0); // T = 0
+         
+         actor.actions.moveBy(100, 0, 100);
+         actor.actions.moveBy(200, 0, 100);
+
+         //actor.update(engine, 1);
+         actor.update(engine, 50);
+         //actor.update(engine, 1);
+         expect(actor.pos.x).toBe(50); // T = 50
+
+         actor.actions.moveBy(300, 0, 100);
+
+         //actor.update(engine, 1);
+         actor.update(engine, 50);
+         //actor.update(engine, 1);
+         expect(actor.pos.x).toBe(100); // T = 100
+
+         //actor.update(engine, 1);
+         actor.update(engine, 100);
+         //actor.update(engine, 1);
+         expect(actor.pos.x).toBe(200); // T = 200
+
+         //actor.update(engine, 1);
+         actor.update(engine, 100);
+         //actor.update(engine, 1);
+         expect(actor.pos.x).toBe(300); // T = 300
+      });
       
       it('can be moved to a location by a certain time', () => {
          expect(actor.pos.x).toBe(0);

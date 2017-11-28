@@ -175,16 +175,17 @@ export class MoveBy implements IAction {
       }
 
       var m = this._dir.scale(this._speed);
-      this._actor.vel.x = m.x;
-      this._actor.vel.y = m.y;
+      this._actor.pos.x += m.x * _delta / 1000;
+      this._actor.pos.y += m.y * _delta / 1000;
 
-      
       if (this.isComplete(this._actor)) {
          this._actor.pos.x = this._end.x;
          this._actor.pos.y = this._end.y;
          this._actor.vel.y = 0;
          this._actor.vel.x = 0;
       }
+      
+      //console.log(`Update (${_delta}) ms - Actor pos: ${this._actor.pos.toString()}`);
    }
 
    public isComplete(actor: Actor): boolean {
@@ -1032,7 +1033,9 @@ export class ActionQueue {
          this._currentAction.update(delta);
 
          if (this._currentAction.isComplete(this._actor)) {
+            //console.log('New action q\'d');
             this._completedActions.push(this._actions.shift());
+            //this.update(delta);
          }
       }
    }
