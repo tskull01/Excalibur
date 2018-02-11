@@ -1,5 +1,5 @@
-/// <reference path="jasmine.d.ts" />
-/// <reference path="Mocks.ts" />
+import * as ex from '../engine/Index';
+import { TestUtils } from './TestUtils';
 
 describe('A Timer', () => {
    var timer;

@@ -1,7 +1,4 @@
-// Promise Tests 
-/// <reference path="jasmine.d.ts" />
-
-/// <reference path="Mocks.ts" />
+import * as ex from '../engine/Index';
 
 describe('A promise', () => {
    var promise: ex.Promise<any>;

@@ -1,8 +1,6 @@
-/// <reference path="jasmine.d.ts" />
-/// <reference path="support/js-imagediff.d.ts" />
-
-/// <reference path="TestUtils.ts" />
-/// <reference path="Mocks.ts" />
+import * as ex from '../engine/Index';
+import { Mocks } from './Mocks';
+import { TestUtils } from './TestUtils';
 
 describe('A scaled and rotated actor', () => {
    var actor: ex.Actor;

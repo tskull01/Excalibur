@@ -1027,7 +1027,7 @@ O|===|* >________________>\n\
        }
    }
 
-   private _initializeHiDpi() {
+   public _initializeHiDpi() {
       
       // Scale the canvas if needed
       if (this.isHiDpi) {

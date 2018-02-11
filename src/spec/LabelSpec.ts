@@ -1,8 +1,4 @@
-﻿/// <reference path="jasmine.d.ts" />
-/// <reference path="support/js-imagediff.d.ts" />
-/// <reference path="support/platform.d.ts" />
-
-/// <reference path="Mocks.ts" />
+﻿import * as ex from '../engine/Index';
 
 describe('A label', () => {
    var label: ex.Label;

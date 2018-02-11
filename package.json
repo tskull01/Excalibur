@@ -29,6 +29,7 @@
     "sandbox": "grunt sandbox"
   },
   "devDependencies": {
+    "@types/jasmine": "^2.8.2",
     "grunt": "^1.0.1",
     "grunt-build-control": "^0.7.1",
     "grunt-bumpup": "^0.6.3",
@@ -53,13 +54,16 @@
     "karma-coverage": "^1.1.1",
     "karma-jasmine": "^1.1.0",
     "karma-typescript": "^3.0.5",
+    "karma-webpack": "^2.0.6",
     "rimraf": "^2.6.1",
     "source-map-support": "^0.4.3",
     "sync-request": "^4.0.2",
     "travis-ci": "^2.1.0",
+    "ts-loader": "^3.2.0",
     "tslint": "^3.13.0",
     "typedoc": "^0.5.10",
-    "typescript": "^2.2.2"
+    "typescript": "^2.2.2",
+    "webpack": "^3.9.1"
   },
   "dependencies": {}
 }

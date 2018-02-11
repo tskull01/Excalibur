@@ -1,7 +1,6 @@
-/// <reference path="../../build/dist/excalibur.d.ts" />
+import * as ex from '../engine/Index';
 
-
-module TestUtils {
+export module TestUtils {
 
    export function engine(options: ex.IEngineOptions = {}): ex.Engine {
       options = ex.Util.extend(false, {
@@ -17,5 +16,5 @@ module TestUtils {
 
       return game;
    }
-
 }
+

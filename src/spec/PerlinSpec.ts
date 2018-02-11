@@ -1,8 +1,4 @@
-/// <reference path="jasmine.d.ts" />
-
-/// <reference path="TestUtils.ts" />
-/// <reference path="support/js-imagediff.d.ts" />
-/// <reference path="Mocks.ts" />
+import * as ex from '../engine/Index';
 
 describe('Perlin Noise', () => {
    var generator: ex.PerlinGenerator = null;

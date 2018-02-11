@@ -1,6 +1,7 @@
 {
    "compilerOptions": {
-       "module": "system",
+       "module": "es2015",
+       "moduleResolution": "node",
        "noImplicitAny": true,
        "removeComments": true,
        "preserveConstEnums": true,
@@ -8,7 +9,7 @@
        "sourceMap": true
    },
    "include": [
-       "src/spec/**/*"
+       "src/spec/index.ts"
    ],
    "exclude": [
        "node_modules",

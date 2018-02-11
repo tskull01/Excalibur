@@ -1,6 +1,4 @@
-/// <reference path="jasmine.d.ts" />
-
-/// <reference path="Mocks.ts" />
+import * as ex from '../engine/Index';
 
 const mockData = 'testdata';
 
@@ -297,7 +295,7 @@ describe('Sound resource', () => {
 });
 
 class MockAudioImplementation implements ex.IAudioImplementation {
-   public responseType = 'test';
+   public responseType: any = 'text';
    public processData(data: any): ex.Promise<any> {
       return ex.Promise.resolve(data);
    }
@@ -313,7 +311,7 @@ class MockAudioInstance implements ex.IAudio {
    private _startTime = 0;
    private _duration = 100;
    private _playComplete: ex.Promise<boolean>;
-   private _playing: NodeJS.Timer;
+   private _playing: any;
 
    public loop = false;
    public volume = 1.0;

@@ -24,11 +24,22 @@ let toImageDataFromPath = function(pathToImage: string) {
    return ctx.getImageData(0, 0, img.naturalWidth, img.naturalHeight);
 };
 
+let toBase64Image = function(imageData: ImageData) {
+   let canvas = new HTMLCanvasElement();
+   canvas.width = imageData.width;
+   canvas.height = imageData.height;
+
+   let ctx = canvas.getContext('2d');
+   ctx.putImageData(imageData, 0, 0);
+
+   return canvas.toDataURL('image/png', 0);
+}
+
 interface ImageComparison {
    actualImageData: ImageData;
    expectedImageData: ImageData;
    diffImageData: ImageData;
-   percentDifferent: number;
+   percentSame: number;
 }
 
 function compareImageData(imageActualData: ImageData, imageExpectedData: ImageData): ImageComparison {
@@ -38,8 +49,12 @@ function compareImageData(imageActualData: ImageData, imageExpectedData: ImageDa
    let result: ImageComparison = {
       actualImageData: imageActualData,
       expectedImageData: imageExpectedData,
-      percentDifferent: 100
+      diffImageData: new ImageData(widthDiff, heightDiff),
+      percentSame: 100
    }
+
+   let totalPixels = widthDiff * heightDiff;
+   let pixelsDiff = 0;
    if (widthDiff === 0 && heightDiff === 0) {
       let width = imageActualData.width;
       let height = imageActualData.height;
@@ -55,21 +70,40 @@ function compareImageData(imageActualData: ImageData, imageExpectedData: ImageDa
             let expectedPixelG = imageExpectedData[pixelIndex + 1];
             let expectedPixelB = imageExpectedData[pixelIndex + 2];
             let expectedPixelA = imageExpectedData[pixelIndex + 3];
+
+            let pixelDiffR = Math.abs(expectedPixelR - actualPixelR);
+            let pixelDiffG = Math.abs(expectedPixelG - actualPixelG);
+            let pixelDiffB = Math.abs(expectedPixelB - actualPixelB);
+            let pixelDiffA = Math.abs(expectedPixelA - actualPixelA);
+            
+            if (!pixelDiffR || !pixelDiffG || !pixelDiffB || !pixelDiffA) {
+               pixelsDiff++;
+            }
+
+            result.diffImageData.data[pixelIndex + 0] = pixelDiffR;
+            result.diffImageData.data[pixelIndex + 1] = pixelDiffG;
+            result.diffImageData.data[pixelIndex + 2] = pixelDiffB;
+            result.diffImageData.data[pixelIndex + 3] = pixelDiffA;
          }
       }
    }
 
-   return null;
+   return result;
 }
 
-let customMatcher = {
-   toImageEqual: function(util, customEqualityTesters) {
+export let customMatcher = {
+   toBeImage: function(util, customEqualityTesters) {
 
       return {
-         compare: function(actual, expected) {
+         compare: function(actual: HTMLCanvasElement, expected: string, percent: number) {
             let result: { pass: boolean, message: string };
 
-            result.pass = false;
+            let actualImageData = toImageDataFromCanvas(actual);
+            let expectedImageData = toImageDataFromPath(expected);
+
+            let compare = compareImageData(actualImageData, expectedImageData);
+
+            result.pass = compare.percentSame >= percent;
             result.message = 'Not implemented';
 
             return result;

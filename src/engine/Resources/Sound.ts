@@ -288,7 +288,7 @@ export class Sound implements ILoadable, IAudio {
             this._logger.debug('Resuming paused instances for sound', this.path, this._tracks);
 
             // resolve when resumed tracks are done
-            return Promise.join(resumed);
+            return Promise.join<boolean>(resumed);
          }
 
          // push a new track
@@ -393,8 +393,13 @@ export class Sound implements ILoadable, IAudio {
       return complete;
    }
 
+   /**
+    * 
+    * @param onload 
+    * @internal
+    */
    /* istanbul ignore next */
-   private _fetchResource(onload: (XMLHttpRequest: XMLHttpRequest) => void) {
+   public _fetchResource(onload: (XMLHttpRequest: XMLHttpRequest) => void) {
       var request = new XMLHttpRequest();
 
       request.open('GET', this.path, true);

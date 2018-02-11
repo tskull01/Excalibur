@@ -1,5 +1,6 @@
-/// <reference path="jasmine.d.ts" />
-/// <reference path="Mocks.ts" />
+import * as ex from '../engine/Index';
+import { Mocks } from './Mocks';
+import { TestUtils } from './TestUtils';
 
 describe('The engine', () => {
    var engine: ex.Engine;

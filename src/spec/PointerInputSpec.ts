@@ -1,6 +1,5 @@
-/// <reference path="jasmine.d.ts" />
-
-/// <reference path="TestUtils.ts" />
+import * as ex from '../engine/Index';
+import { TestUtils } from './TestUtils';
 
 describe('A pointer', () => {
 

@@ -1,6 +1,4 @@
-/// <reference path="jasmine.d.ts" />
-
-/// <reference path="Mocks.ts" />
+import * as ex from '../engine/Index';
 
 describe('Excalibur Math', () => {
    it('can convert radians to degrees', () => {
