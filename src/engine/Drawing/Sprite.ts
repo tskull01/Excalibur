@@ -110,10 +110,10 @@ export class SpriteImpl implements IDrawable {
    constructor(imageOrConfig: Texture | ISpriteArgs, x: number, y: number, width: number, height: number) {
       var image = imageOrConfig;
       if (imageOrConfig && !(imageOrConfig instanceof Texture)) {
-         x = imageOrConfig.x || imageOrConfig.sx;
-         y = imageOrConfig.y || imageOrConfig.sy;
-         width = imageOrConfig.drawWidth || imageOrConfig.swidth;
-         height = imageOrConfig.drawHeight || imageOrConfig.sheight;
+         x = imageOrConfig.x || imageOrConfig.sx | 0;
+         y = imageOrConfig.y || imageOrConfig.sy | 0;
+         width = imageOrConfig.width || imageOrConfig.swidth | 0;
+         height = imageOrConfig.height || imageOrConfig.sheight | 0;
          image = imageOrConfig.image;
          if (!image) {
             const message = 'An image texture is required to contsruct a sprite';
@@ -130,9 +130,11 @@ export class SpriteImpl implements IDrawable {
       this._spriteCanvas.height = height;
       this._spriteCtx = <CanvasRenderingContext2D>this._spriteCanvas.getContext('2d');
       this._texture.loaded.then(() => {
+         this.width = this.width || this._texture.image.naturalWidth;
+         this.height = this.height || this._texture.image.naturalHeight;
          this._spriteCanvas.width = this._spriteCanvas.width || this._texture.image.naturalWidth;
          this._spriteCanvas.height = this._spriteCanvas.height || this._texture.image.naturalHeight;
-         this._loadPixels();            
+         this._loadPixels();
          this._dirtyEffect = true;
       }).error((e) => {
          this.logger.error('Error loading texture ', this._texture.path, e);
