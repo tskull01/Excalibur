@@ -52,8 +52,15 @@ export class DynamicTreeCollisionBroadphase implements ICollisionBroadphase {
          return false;
       }
 
-      // if the other is prevent collision or is dead short circuit
-      if (actorB.collisionType === CollisionType.PreventCollision || actorB.isKilled()) { return false; }
+      // if the either is prevent collision or is dead short circuit
+      if (actorB.collisionType === CollisionType.PreventCollision ||
+          actorA.collisionType === CollisionType.PreventCollision) { 
+         return false; 
+      }
+
+      if (actorA.isKilled() || actorB.isKilled()) {
+         return false;
+      }
 
       // they can collide
       return true;

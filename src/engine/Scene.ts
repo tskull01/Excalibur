@@ -641,6 +641,7 @@ export class Scene extends Class implements ICanInitialize, ICanActivate, ICanDe
       if (actor instanceof Trigger) {
          this._triggerKillQueue.push(actor);
       } else {
+         (<any>actor)._isKilled = true;
          this._killQueue.push(actor);
       }
       
