@@ -386,7 +386,7 @@ export class Scene extends Class implements ICanInitialize, ICanActivate, ICanDe
         // Remove actors from scene graph after being killed
         var actorIndex: number;
         for (let killed of killQueue) {
-            if (!killed.isKilled) { continue; }; // this case is when an actor is readded in the same frame
+            if (!killed.isKilled()) { continue; }; // this case is when an actor is readded in the same frame
             actorIndex = collection.indexOf(killed);
             if (actorIndex > -1) {
                 this._sortedDrawingTree.removeByComparable(killed);
