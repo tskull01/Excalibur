@@ -1,6 +1,7 @@
-/// <reference path="../../build/dist/excalibur.d.ts" />
 
-namespace TestUtils {
+import * as ex from '../../build/dist/excalibur';
+
+export namespace TestUtils {
   export function engine(options: ex.IEngineOptions = {}): ex.Engine {
     options = ex.Util.extend(
       false,

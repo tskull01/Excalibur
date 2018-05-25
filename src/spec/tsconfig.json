@@ -3,6 +3,11 @@
       "sourceMap": true,
       "experimentalDecorators": true,
       "target": "es5",
-      "module": "none"
+      "module": "esnext",
+      "moduleResolution": "node",
+      "types": [
+         "@types/jasmine",
+         "../../build/dist/excalibur.d.ts"
+      ]
    }
 }
