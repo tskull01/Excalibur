@@ -3,7 +3,9 @@
     "sourceMap": true,
     "experimentalDecorators": true,
     "target": "es5",
-    "module": "none",
-    "types": ["@types/jasmine"]
+    "allowJs": true,
+    "module": "commonjs",
+    "types": ["@types/jasmine"],
+    "lib": ["dom", "es2015", "es2015.promise"]
   }
 }

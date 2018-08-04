@@ -1,8 +1,12 @@
-/// <reference path="Mocks.ts" />
+// import failing because window is undefined
+import * as ex from './excalibur';
+import { Mocks } from './Mocks';
+import { TestUtils } from './TestUtils';
 
 describe('An animation', () => {
-  var animation;
-  var engine: ex.Engine;
+  let animation: ex.Animation;
+  let engine: ex.Engine;
+
   beforeEach(() => {
     animation = new ex.Animation(null, null, 0);
     engine = TestUtils.engine({

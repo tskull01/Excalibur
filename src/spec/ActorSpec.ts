@@ -1,5 +1,6 @@
 /// <reference path="support/js-imagediff.d.ts" />
-/// <reference path="Mocks.ts" />
+import * as ex from '../../build/dist/excalibur';
+import { Mocks } from './Mocks';
 
 describe('A game actor', () => {
   let actor: ex.Actor;
