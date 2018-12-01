@@ -43,6 +43,21 @@ function spawnCircle(x: number, y: number) {
   game.add(circle);
 }
 
+function spawnMassiveCircle(x: number, y: number) {
+  var width = ex.Util.randomInRange(20, 100);
+  var color = new ex.Color(ex.Util.randomIntInRange(0, 255), ex.Util.randomIntInRange(0, 255), ex.Util.randomIntInRange(0, 255));
+  var circle = new ex.Actor(x, y, width, width, color);
+  circle.rx = ex.Util.randomInRange(-0.5, 0.5);
+  circle.vel.setTo(0, 300);
+  circle.body.useCircleCollision(width / 2);
+  circle.body.mass = 500000;
+  circle.collisionType = ex.CollisionType.Active;
+  circle.draw = (ctx: CanvasRenderingContext2D) => {
+    ex.Util.DrawUtil.circle(ctx, circle.x, circle.y, width / 2, color, color);
+  };
+  game.add(circle);
+}
+
 var edge = new ex.Actor(0, 0, 5, 5, ex.Color.Blue.clone());
 edge.collisionType = ex.CollisionType.Fixed;
 edge.body.useEdgeCollision(new ex.Vector(200, 300), new ex.Vector(400, 300));
@@ -71,6 +86,10 @@ game.input.keyboard.on('down', (evt: ex.Input.KeyEvent) => {
 
   if (evt.key === ex.Input.Keys.C) {
     spawnCircle(300, 0);
+  }
+
+  if (evt.key === ex.Input.Keys.M) {
+    spawnMassiveCircle(300, 0);
   }
 });
 

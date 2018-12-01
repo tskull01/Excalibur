@@ -81,6 +81,11 @@ export class Body {
   public restitution: number = 0.2;
 
   /**
+   * Allow rigid body rotation on this body
+   */
+  public allowRigidBodyRotation: boolean = true;
+
+  /**
    * The rotation of the actor in radians
    */
   public rotation: number = 0; // radians

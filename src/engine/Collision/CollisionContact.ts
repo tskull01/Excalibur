@@ -123,6 +123,10 @@ export class CollisionContact {
     var invMoiA = bodyA.actor.collisionType === CollisionType.Fixed ? 0 : 1 / bodyA.moi;
     var invMoiB = bodyB.actor.collisionType === CollisionType.Fixed ? 0 : 1 / bodyB.moi;
 
+    var massA = bodyA.actor.collisionType === CollisionType.Fixed ? 9999999999999 : bodyA.mass;
+    var massB = bodyB.actor.collisionType === CollisionType.Fixed ? 9999999999999 : bodyB.mass;
+    var totalMass = massA + massB;
+
     // average restitution more relistic
     var coefRestitution = Math.min(bodyA.restitution, bodyB.restitution);
 
@@ -158,13 +162,13 @@ export class CollisionContact {
 
     if (bodyA.actor.collisionType === CollisionType.Fixed) {
       bodyB.vel = bodyB.vel.add(normal.scale(impulse * invMassB));
-      if (Physics.allowRigidBodyRotation) {
+      if (Physics.allowRigidBodyRotation && bodyB.allowRigidBodyRotation) {
         bodyB.rx -= impulse * invMoiB * -rb.cross(normal);
       }
       bodyB.addMtv(mtv);
     } else if (bodyB.actor.collisionType === CollisionType.Fixed) {
       bodyA.vel = bodyA.vel.sub(normal.scale(impulse * invMassA));
-      if (Physics.allowRigidBodyRotation) {
+      if (Physics.allowRigidBodyRotation && bodyA.allowRigidBodyRotation) {
         bodyA.rx += impulse * invMoiA * -ra.cross(normal);
       }
       bodyA.addMtv(mtv.negate());
@@ -173,13 +177,19 @@ export class CollisionContact {
       bodyA.vel = bodyA.vel.sub(normal.scale(impulse * invMassA));
 
       if (Physics.allowRigidBodyRotation) {
-        bodyB.rx -= impulse * invMoiB * -rb.cross(normal);
-        bodyA.rx += impulse * invMoiA * -ra.cross(normal);
+        if (bodyB.allowRigidBodyRotation) {
+          bodyB.rx -= impulse * invMoiB * -rb.cross(normal);
+        }
+        if (bodyA.allowRigidBodyRotation) {
+          bodyA.rx += impulse * invMoiA * -ra.cross(normal);
+        }
       }
 
-      // Split the mtv in half for the two bodies, potentially we could do something smarter here
-      bodyB.addMtv(mtv.scale(0.5));
-      bodyA.addMtv(mtv.scale(-0.5));
+      // Split the mtv by mass
+      var bodyBPortion = (totalMass - massB) / totalMass;
+      var bodyAPortion = (totalMass - massA) / totalMass;
+      bodyB.addMtv(mtv.scale(bodyBPortion));
+      bodyA.addMtv(mtv.scale(-bodyAPortion));
     }
 
     // Friction portion of impulse
@@ -219,10 +229,33 @@ export class CollisionContact {
 
         // apply frictional impulse
         if (Physics.allowRigidBodyRotation) {
-          bodyB.rx += frictionImpulse.dot(t) * invMoiB * rb.cross(t);
-          bodyA.rx -= frictionImpulse.dot(t) * invMoiA * ra.cross(t);
+          if (bodyB.allowRigidBodyRotation) {
+            bodyB.rx += frictionImpulse.dot(t) * invMoiB * rb.cross(t);
+          }
+          if (bodyA.allowRigidBodyRotation) {
+            bodyA.rx -= frictionImpulse.dot(t) * invMoiA * ra.cross(t);
+          }
         }
       }
+    }
+
+    // Negate velocities in the opposite directions as mtv
+    let mtvDir = mtv.normalize();
+
+    // only adjust if velocity is opposite
+    if (mtvDir.negate().dot(bodyA.vel) < 0) {
+      // Cancel out velocity in direction of mtv
+      let velAdj = mtvDir.scale(mtvDir.dot(bodyA.vel.negate()));
+
+      bodyA.vel = bodyA.vel.add(velAdj);
+    }
+
+    // only adjust if velocity is opposite
+    if (mtvDir.dot(bodyB.vel) < 0) {
+      // Cancel out velocity in direction of mtv
+      let velAdj = mtvDir.scale(mtvDir.dot(bodyB.vel.negate()));
+
+      bodyB.vel = bodyB.vel.add(velAdj);
     }
 
     bodyA.actor.emit('postcollision', new PostCollisionEvent(this.bodyA.body.actor, this.bodyB.body.actor, side, this.mtv));
