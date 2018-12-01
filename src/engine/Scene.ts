@@ -89,8 +89,8 @@ export class Scene extends Class implements ICanInitialize, ICanActivate, ICanDe
     super();
     this.camera = new BaseCamera();
     if (engine) {
-      this.camera.x = engine.halfDrawWidth;
-      this.camera.y = engine.halfDrawHeight;
+      this.camera.x = engine.drawWidth * (0.5 - engine.origin.x);
+      this.camera.y = engine.drawHeight * (0.5 - engine.origin.y);
     }
   }
 
@@ -222,8 +222,8 @@ export class Scene extends Class implements ICanInitialize, ICanActivate, ICanDe
   public _initialize(engine: Engine) {
     if (!this.isInitialized) {
       if (this.camera) {
-        this.camera.x = engine.halfDrawWidth;
-        this.camera.y = engine.halfDrawHeight;
+        this.camera.x = engine.drawWidth * (0.5 - engine.origin.x);
+        this.camera.y = engine.drawHeight * (0.5 - engine.origin.y);
       }
 
       this._initializeChildren();

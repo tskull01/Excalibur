@@ -25,7 +25,8 @@ import {
   ActivateEvent,
   PreDrawEvent,
   PostDrawEvent,
-  InitializeEvent
+  InitializeEvent,
+  ResizeEvent
 } from './Events';
 import { ILoader } from './Interfaces/ILoader';
 import { Logger, LogLevel } from './Util/Log';
@@ -117,6 +118,18 @@ export interface IEngineOptions {
   displayMode?: DisplayMode;
 
   /**
+   * Optionally specify where the origin will be located in Excalibur as a ratio of the screen from 0-1, default is top-left (0, 0).
+   * Example values: Bottom right would be (1, 1), top-right (1, 0), and bottom-left (0, 1).
+   */
+  origin?: Vector;
+
+  /**
+   * Optionally indicate to excalibur to preserve the defined origin screen location on the screen when a resize occurs, default is false.
+   * This will move the current scene's camera to position the origin.
+   */
+  preserveOriginOnResize?: boolean;
+
+  /**
    * Configures the pointer scope. Pointers scoped to the 'Canvas' can only fire events within the canvas viewport; whereas, 'Document'
    * (default) scoped will fire anywhere on the page.
    */
@@ -191,6 +204,14 @@ export class Engine extends Class implements ICanInitialize, ICanUpdate, ICanDra
    * Direct access to the canvas element ID, if an ID exists
    */
   public canvasElementId: string;
+
+  /**
+   * Origin location for excalibur, the default is (0, 0) meaning the origin will be placed in the top-left
+   * corner of the screen by default. To place the origin in the bottom-right would be (1, 1).
+   */
+  public origin: Vector = Vector.Zero.clone();
+
+  public preserveOriginOnResize: boolean = false;
 
   /**
    * The width of the game canvas in pixels (physical width component of the
@@ -383,6 +404,7 @@ export class Engine extends Class implements ICanInitialize, ICanUpdate, ICanDra
 
   private _isInitialized: boolean = false;
 
+  public on(eventName: Events.resize, handler: (event?: Events.ResizeEvent) => void): void;
   public on(eventName: Events.initialize, handler: (event?: Events.InitializeEvent) => void): void;
   public on(eventName: Events.visible, handler: (event?: VisibleEvent) => void): void;
   public on(eventName: Events.hidden, handler: (event?: HiddenEvent) => void): void;
@@ -399,6 +421,7 @@ export class Engine extends Class implements ICanInitialize, ICanUpdate, ICanDra
     super.on(eventName, handler);
   }
 
+  public once(eventName: Events.resize, handler: (event?: Events.ResizeEvent) => void): void;
   public once(eventName: Events.initialize, handler: (event?: Events.InitializeEvent) => void): void;
   public once(eventName: Events.visible, handler: (event?: VisibleEvent) => void): void;
   public once(eventName: Events.hidden, handler: (event?: HiddenEvent) => void): void;
@@ -415,6 +438,7 @@ export class Engine extends Class implements ICanInitialize, ICanUpdate, ICanDra
     super.once(eventName, handler);
   }
 
+  public off(eventName: Events.resize, handler: (event?: Events.ResizeEvent) => void): void;
   public off(eventName: Events.initialize, handler?: (event?: Events.InitializeEvent) => void): void;
   public off(eventName: Events.visible, handler?: (event?: VisibleEvent) => void): void;
   public off(eventName: Events.hidden, handler?: (event?: HiddenEvent) => void): void;
@@ -439,6 +463,8 @@ export class Engine extends Class implements ICanInitialize, ICanUpdate, ICanDra
     height: 0,
     canvasElementId: '',
     pointerScope: Input.PointerScope.Document,
+    origin: Vector.Zero.clone(),
+    preserveOriginOnResize: false,
     suppressConsoleBootMessage: null,
     suppressMinimumBrowserFeatureDetection: null,
     suppressHiDPIScaling: null,
@@ -551,6 +577,14 @@ O|===|* >________________>\n\
 
     if (options.backgroundColor) {
       this.backgroundColor = options.backgroundColor.clone();
+    }
+
+    if (options.origin) {
+      this.origin = options.origin.clone();
+    }
+
+    if (options.preserveOriginOnResize) {
+      this.preserveOriginOnResize = options.preserveOriginOnResize;
     }
 
     this._loader = new Loader();
@@ -865,8 +899,10 @@ O|===|* >________________>\n\
     var newY = point.y;
 
     // transform back to world space
-    newX = (newX / this.canvas.clientWidth) * this.drawWidth;
-    newY = (newY / this.canvas.clientHeight) * this.drawHeight;
+
+    let canvasRect = this.canvas.getBoundingClientRect();
+    newX = (newX / canvasRect.width) * this.drawWidth;
+    newY = (newY / canvasRect.height) * this.drawHeight;
 
     // transform based on zoom
     newX = newX - this.halfDrawWidth;
@@ -902,8 +938,9 @@ O|===|* >________________>\n\
     screenY = screenY + this.halfDrawHeight;
 
     // transform back to screen space
-    screenX = (screenX * this.canvas.clientWidth) / this.drawWidth;
-    screenY = (screenY * this.canvas.clientHeight) / this.drawHeight;
+    let canvasRect = this.canvas.getBoundingClientRect();
+    screenX = (screenX * canvasRect.width) / this.drawWidth;
+    screenY = (screenY * canvasRect.height) / this.drawHeight;
 
     return new Vector(Math.floor(screenX), Math.floor(screenY));
   }
@@ -911,7 +948,7 @@ O|===|* >________________>\n\
   /**
    * Sets the internal canvas height based on the selected display mode.
    */
-  private _setHeightByDisplayMode(parent: HTMLElement | Window) {
+  private _setWidthAndHeightByDisplayMode(parent: HTMLElement | Window) {
     if (this.displayMode === DisplayMode.Container) {
       this.canvas.width = (<HTMLElement>parent).clientWidth;
       this.canvas.height = (<HTMLElement>parent).clientHeight;
@@ -920,8 +957,14 @@ O|===|* >________________>\n\
     if (this.displayMode === DisplayMode.FullScreen) {
       document.body.style.margin = '0px';
       document.body.style.overflow = 'hidden';
-      this.canvas.width = (<Window>parent).innerWidth;
-      this.canvas.height = (<Window>parent).innerHeight;
+      this.canvas.width = (<Window>parent).innerWidth * this.pixelRatio;
+      this.canvas.height = (<Window>parent).innerHeight * this.pixelRatio;
+
+      this.canvas.style.width = (<Window>parent).innerWidth + 'px';
+      this.canvas.style.height = (<Window>parent).innerHeight + 'px';
+      if (this.ctx) {
+        this.ctx.scale(this.pixelRatio, this.pixelRatio);
+      }
     }
   }
 
@@ -936,12 +979,12 @@ O|===|* >________________>\n\
     if (this.displayMode === DisplayMode.FullScreen || this.displayMode === DisplayMode.Container) {
       var parent = <any>(this.displayMode === DisplayMode.Container ? <any>(this.canvas.parentElement || document.body) : <any>window);
 
-      this._setHeightByDisplayMode(parent);
+      this._setWidthAndHeightByDisplayMode(parent);
 
       window.addEventListener('resize', () => {
+        this.emit('resize', new ResizeEvent(this));
         this._logger.debug('View port resized');
-        this._setHeightByDisplayMode(parent);
-        this._logger.info('parent.clientHeight ' + parent.clientHeight);
+        this._setWidthAndHeightByDisplayMode(parent);
         this.setAntialiasing(this._isSmoothingEnabled);
       });
     } else if (this.displayMode === DisplayMode.Position) {
@@ -1076,11 +1119,13 @@ O|===|* >________________>\n\
       let oldWidth = this.canvas.width;
       let oldHeight = this.canvas.height;
 
-      this.canvas.width = oldWidth * this.pixelRatio;
-      this.canvas.height = oldHeight * this.pixelRatio;
+      if (this.displayMode !== DisplayMode.FullScreen) {
+        this.canvas.width = oldWidth * this.pixelRatio;
+        this.canvas.height = oldHeight * this.pixelRatio;
 
-      this.canvas.style.width = oldWidth + 'px';
-      this.canvas.style.height = oldHeight + 'px';
+        this.canvas.style.width = oldWidth + 'px';
+        this.canvas.style.height = oldHeight + 'px';
+      }
 
       this._logger.warn(`Hi DPI screen detected, resetting canvas resolution from 
                            ${oldWidth}x${oldHeight} to ${this.canvas.width}x${this.canvas.height} 

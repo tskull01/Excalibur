@@ -26,6 +26,8 @@ export enum EventTypes {
   PreFrame = 'preframe',
   PostFrame = 'postframe',
 
+  Resize = 'resize',
+
   PreCollision = 'precollision',
   CollisionStart = 'collisionstart',
   CollisionEnd = 'collisionend',
@@ -98,6 +100,8 @@ export type postupdate = 'postupdate';
 
 export type preframe = 'preframe';
 export type postframe = 'postframe';
+
+export type resize = 'resize';
 
 export type precollision = 'precollision';
 export type collisionstart = 'collisionstart';
@@ -351,6 +355,13 @@ export class PreFrameEvent extends GameEvent<Engine> {
  */
 export class PostFrameEvent extends GameEvent<Engine> {
   constructor(public engine: Engine, public stats: FrameStats) {
+    super();
+    this.target = engine;
+  }
+}
+
+export class ResizeEvent extends GameEvent<Engine> {
+  constructor(public engine: Engine) {
     super();
     this.target = engine;
   }

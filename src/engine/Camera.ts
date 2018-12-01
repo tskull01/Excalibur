@@ -5,7 +5,7 @@ import { Vector } from './Algebra';
 import { Actor } from './Actor';
 import { removeItemFromArray } from './Util/Util';
 import { ICanUpdate, ICanInitialize } from './Interfaces/LifecycleEvents';
-import { PreUpdateEvent, PostUpdateEvent, GameEvent, InitializeEvent } from './Events';
+import { PreUpdateEvent, PostUpdateEvent, GameEvent, InitializeEvent, ResizeEvent } from './Events';
 import { Class } from './Class';
 
 /**
@@ -446,6 +446,14 @@ export class BaseCamera extends Class implements ICanUpdate, ICanInitialize {
 
   public _initialize(_engine: Engine) {
     if (!this.isInitialized) {
+      _engine.on('resize', (_resize: ResizeEvent) => {
+        if (_engine.preserveOriginOnResize) {
+          let diff = _engine.screenToWorldCoordinates(
+            new Vector(_engine.origin.x * _engine.drawWidth, _engine.origin.y * _engine.drawHeight)
+          );
+          this.pos = this.pos.add(diff.negate());
+        }
+      });
       this.onInitialize(_engine);
       super.emit('initialize', new InitializeEvent(_engine, this));
       this._isInitialized = true;
