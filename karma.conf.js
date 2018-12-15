@@ -1,6 +1,9 @@
+const process = require('process');
+process.env.CHROME_BIN = require('puppeteer').executablePath();
+
 module.exports = (config) => {
    config.set({
-      singleRun: true,
+      singleRun: false,
       frameworks: ['jasmine'],
       files: [
           'src/spec/UIActorSpec.ts',
@@ -26,10 +29,11 @@ module.exports = (config) => {
       browsers: ['ChromeHeadless_with_debug'],
       customLaunchers: {
           ChromeHeadless_with_debug: {
-              base: 'ChromeHeadless',
+              base: 'Chrome',
               flags: [
                   '--remote-debugging-port=9334',
-                  '--no-sandbox'
+                  '--no-sandbox',
+                  '--disable-web-security'
              ]
           },
           Chrome_with_debug: {
