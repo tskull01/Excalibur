@@ -11,7 +11,7 @@ describe('A Gif', () => {
       height: 100
     });
 
-    gif = new ex.Gif('base/src/spec/images/GifSpec/sword.gif');
+    gif = new ex.Gif('base/src/spec/images/GifSpec/sword.gif', ex.Color.Black.clone());
   });
   afterEach(() => {
     engine.stop();
@@ -27,10 +27,10 @@ describe('A Gif', () => {
       expect(spriteFrame.drawHeight).toBe(100);
       expect(spriteFrame.drawWidth).toBe(100);
 
-      var sprite = gif.asSprite();
-      var actor = new ex.Actor(0, 0, gif.width, gif.height);
-      actor.addDrawing(sprite);
-      engine.add(actor);
+      var sprite: ex.Sprite = gif.asSprite();
+      expect(gif.isLoaded()).toBe(true);
+      (<any>sprite)._applyEffects();
+      sprite.draw(engine.ctx, 0, 0);
 
       imagediff.expectCanvasImageMatches('GifSpec/frame1.png', engine.canvas, done);
     });

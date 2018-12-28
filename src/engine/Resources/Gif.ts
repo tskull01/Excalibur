@@ -74,6 +74,7 @@ export class Gif extends Resource<Texture[]> {
           promises.push(texture.load());
         }
         Promise.join(promises).then(() => {
+          this._isLoaded = true;
           complete.resolve(this._texture);
         });
       },
