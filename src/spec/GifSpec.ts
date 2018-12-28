@@ -29,7 +29,7 @@ describe('A Gif', () => {
 
       var sprite: ex.Sprite = gif.asSprite();
       expect(gif.isLoaded()).toBe(true);
-      (<any>sprite)._applyEffects();
+      //   (<any>sprite)._applyEffects();
       sprite.draw(engine.ctx, 0, 0);
 
       imagediff.expectCanvasImageMatches('GifSpec/frame1.png', engine.canvas, done);
