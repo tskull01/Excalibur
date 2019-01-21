@@ -1343,15 +1343,8 @@ export class ActorImpl extends Class implements IActionable, IEvented, IPointerE
       this.color.a = this.opacity;
     }
     
-    //Get visibility
-    public getVisibile(){
-    return this.visible; 
-    }
-    
-    //Set visibility 
-    public setVisible(v: boolean){
-      this.opacity = 0 ? v = false : v = true;
-      this.visible = v; 
+    if(this.opacity = 0){
+     setVisible(false); 
     }
     
     // calculate changing opacity
@@ -1383,6 +1376,16 @@ export class ActorImpl extends Class implements IActionable, IEvented, IPointerE
     this._postupdate(engine, delta);
   }
 
+   //Get visibility
+    public getVisibile(){
+    return this.visible; 
+    }
+    
+    //Set visibility 
+    public setVisible(v: boolean){
+      this.visible = v; 
+    }
+  
   /**
    * Safe to override onPreUpdate lifecycle event handler. Synonymous with `.on('preupdate', (evt) =>{...})`
    *
