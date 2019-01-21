@@ -1344,7 +1344,7 @@ export class ActorImpl extends Class implements IActionable, IEvented, IPointerE
     }
     
     if(this.opacity = 0){
-     setVisible(false); 
+    this.setVisible(false); 
     }
     
     // calculate changing opacity
